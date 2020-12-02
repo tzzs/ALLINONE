@@ -1,6 +1,6 @@
 package com.imtzz.site.Controller;
 
-import com.alibaba.fastjson.JSONObject;
+import com.imtzz.site.Dao.DTO.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,6 +11,7 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/imageHosting")
@@ -21,12 +22,12 @@ public class ImageHostingController {
     private String uploadDir;
 
     @RequestMapping("/upload")
-    public JSONObject upload(@RequestParam(value = "file") CommonsMultipartFile file) throws RuntimeException {
-        JSONObject jsonObject = new JSONObject();
-
+    public Message upload(@RequestParam(value = "file") CommonsMultipartFile file) throws RuntimeException {
+        Message msg = new Message();
+        Map<Object, Object> data = msg.getData();
         if (file.isEmpty()) {
-            jsonObject.put("res", "图片为空");
-            return jsonObject;
+            data.put("res", "图片为空");
+            return msg;
         }
 
         String fileName = file.getOriginalFilename();
@@ -45,13 +46,12 @@ public class ImageHostingController {
         try {
             file.transferTo(dest);
             LOGGER.info("上传文件路径：" + filePath + fileName);
-            jsonObject.put("res", fileName);
-            return jsonObject;
+            data.put("res", fileName);
+            return msg;
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-
-        return jsonObject;
+        return msg;
     }
 }
